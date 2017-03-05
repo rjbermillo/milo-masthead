@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Nestle Milo</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- JS -->
+    <script src="zepto.js"></script>
+
+    <!-- Enabler should always come first. -->
+    <script src="https://s0.2mdn.net/ads/studio/Enabler.js"></script>
+
+    <!-- Polymer should come before custom elements, like the close button. -->
+    <script src="https://www.gstatic.com/external_hosted/polymer/custom.elements.min.js"></script>
+
+    <!-- YouTube close button -->
+
+    <script src="https://www.gstatic.com/ads/ci/ytclosebutton/1/ytclosebutton_min.js"></script
+  </head>
+
+  <body>
+
+    <div id="main-panel">
+      <div id="Blocker"></div>
+      <div id="collapsed-panel">
+        <div id="ctaExpand_dc">Click To Expand</div>
+        <div id="barbarian_1" class="baranimation"></div>
+
+        <!-- Add collapsed content here. -->
+        <div id="collapsed-bg-exit"></div>
+        <div id="logo_dc"></div>
+
+      </div>
+      <div id="expandedborder"></div>
+      <div id="expanded-panel">
+        <div id="ctaClose_dc">X Close Expanded</div>
+        <p id="text1">Collect Gold and Elixer to #BeatEnergyGap</p>
+        <div id="expanded-bg-exit"></div>
+        <div id="logo_dc2"></div>
+        <!-- Add expanded content here. -->
+        <div id="villager" style="opacity:1;display:block"></div>
+        <div class="clk-con">
+          <div class="container">
+            <div class="gold gd1"></div>
+            <div class="gold gd2"></div>
+            <div class="gold gd3"></div>
+            <div class="gold gd4"></div>
+            <div class="elixer el1"></div>
+            <div class="elixer el2"></div>
+            <div class="elixer el3"></div>
+            <div class="elixer el4"></div>
+          </div>
+          <div class="collect-con">
+          </div>
+          <div class="barbarian trans"></div>
+          <div class="score">
+            <div class="goldscore rounded">
+              <div class="goldcur rounded trans"></div>
+            </div>
+            <div class="gold-icon"></div>
+            <div class="elixerscore rounded">
+              <div class="elixercur rounded trans"></div>
+            </div>
+            <div class="elixer-icon"></div>
+          </div>
+          <div class="levelcon">
+            LEVEL <span id="level">1</span>
+          </div>
+        </div>
+
+        <div id="endframe_BG" class="trans">
+        </div>
+        <p id="text2">#BeatEnergyGap with Milo Champ Moves</p>
+        <div id="learnMoreBlocker"> </div>
+        <div id="retryBlocker"> </div>
+        <div id="retry" class="button trans"></div>
+
+
+         <div id="learnMore" class="trans"></div>
+      </div>
+
+      <ci-ytclosebutton lang="en" theme="white" shadow="false" id="ytClose"/>
+
+    </div>
+  </body>
+  <script type="text/javascript">
+    var Levelupsound = new Audio('xp_level_up_01.mp3');
+    var count = 0;
+    var elemcount = [];
+    var goldcount = 0;
+    var elixercount = 0;
+    var totalscore = 1;
+    var level = 2;
+    var refreshIntervalId;
+    var _cb;
+    var close = true;
+    var gotoEndFrameTimer=0;
+
+    function stopAnimation () {
+
+        $("#barbarian_1").removeClass("baranimation");
+    }
+
+    function getRandomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function game() {
+      //console.log(count)
+      if(count%20==0)
+      {
+        var elem = $(".container div");
+        var rand = getRandomInt(0,7);
+        elem.eq(rand).addClass('blink')
+        elem.eq(rand).css('visibility','visible');
+        elemcount[rand] = 10;
+        var i = 2;
+        var len = elemcount.length;
+        for (; i < len; i++) {
+            elemcount[i]=elemcount[i]-1;
+            if(elemcount[i]==1)
+            {
+              elem.eq(i).css('visibility','hidden');
+            }
+        }
+
+      }
+      if(count==1100){
+        if(totalscore<12&&close)
+        {
+          /* remove 10.10.2015
+          /* console.log('Count less than12')
+          $(".barbarian").css("-webkit-animation", "none");
+          $(".barbarian").css("-moz-animation", "none");
+          $(".barbarian").css("-ms-animation", "none");
+          $(".barbarian").css("animation", "none");
+          setTimeout(function(){
+           // var audio = new Audio('xp_level_up_01.mp3');
+           if(focused){
+            console.log('focused what what what')
+            Levelupsound.play();
+           }
+            $(".barbarian").css("transform","scale(20,20)");
+            $(".barbarian").css("-webkit-transform","scale(20,20)");
+            $(".barbarian").css("-ms-transform","scale(20,20)");
+          },300);
+        gotoEndFrameTimer = setTimeout(function(){
+            console.log('========================================Count more than')
+            $("#retry").css("opacity",1);
+            $("#learnMore").css("opacity",1);
+            $("#endframe_BG").css("z-index",4);
+            $("#endframe_BG").css("opacity",1);
+            $("#expanded-bg-exit").css("display","block");
+            $("#ctaClose_dc").css("left",5);
+            cancelAnimationFrame(_cb);
+            clearInterval(refreshIntervalId);
+            addResolveListener()
+          },500); /* remove 10.10.2015 */
+        }
+      }
+      count++;
+    }
+    function gamestart (){
+
+      count = 0;
+      elemcount = [];
+      goldcount = 0;
+      elixercount = 0;
+      totalscore = 1;
+      level = 2;
+      close = true;
+
+      cancelAnimationFrame(_cb);
+      clearInterval(refreshIntervalId);
+      //========= Added 07.10.2015
+         if(gotoEndFrameTimer){
+          clearTimeout(gotoEndFrameTimer);
+          gotoEndFrameTimer= null;
+      }
+      gotoEndFrameTimer = setTimeout(function () {
+
+            $("#retry").css("opacity",1);
+            $("#learnMore").css("opacity",1);
+            $("#endframe_BG").css("z-index",4);
+            $("#endframe_BG").css("opacity",1);
+            $("#expanded-bg-exit").css("display","block");
+            $("#ctaClose_dc").css("left",5);
+            cancelAnimationFrame(_cb);
+            clearInterval(refreshIntervalId);
+            addResolveListener()
+            clearTimeout(gotoEndFrameTimer);
+          },20000);
+
+
+      //======
+
+
+
+      $("#level").text("1");
+      $('#expanded-panel').find('*[style]').attr('style', '');
+
+      (function() {
+
+      var onEachFrame;
+      if (window.RequestAnimationFrame) {
+          onEachFrame = function(cb) {
+            _cb = function() { cb(); RequestAnimationFrame(_cb); }
+            _cb();
+          };
+        } else if (window.mozRequestAnimationFrame) {
+          onEachFrame = function(cb) {
+            _cb = function() { cb(); mozRequestAnimationFrame(_cb); }
+            _cb();
+          };
+        } else {
+          onEachFrame = function(cb) {
+            refreshIntervalId = setInterval(cb, 1000 / 60);
+          }
+        }
+
+        window.onEachFrame = onEachFrame;
+      })();
+      window.onEachFrame(game);
+
+
+
+
+
+    }
+
+    $("#retry").on('click', function(e){
+      //========= Added 07.10.2015
+      clearInterval(refreshIntervalId);
+      clearTimeout(gotoEndFrameTimer);
+
+      learnMoreBlocker.style.display="block";
+      learnMore.addEventListener('click', learMoreExit, false);
+      $("#retry").css("opacity",0);
+      $("#learnMore").css("opacity",0);
+      $("#endframe_BG").css("z-index",0);
+      $("#endframe_BG").css("opacity",0);
+      $("#expanded-bg-exit").css("display","none");
+       //========= Added 07.10.2015
+
+      Enabler.counter('CTR YT GoSurf: Play Again', true);
+      gamestart();
+
+
+    });
+
+    $(".gold").on('click', function(e){
+      var audio = new Audio('coins_collect.mp3');
+      audio.play();
+      collect($(this),"gold");
+      $(this).css('visibility','hidden');
+      goldcount = goldcount+1;
+      if(goldcount<7)
+      {
+        $(".goldcur").css("width",goldcount*25);
+        levelup();
+      }
+        //========= Added 07.10.2015
+         if(gotoEndFrameTimer){
+          clearTimeout(gotoEndFrameTimer);
+          gotoEndFrameTimer= null;
+          }
+          gotoEndFrameTimer = setTimeout(function () {
+
+                $("#retry").css("opacity",1);
+                $("#learnMore").css("opacity",1);
+                $("#endframe_BG").css("z-index",4);
+                $("#endframe_BG").css("opacity",1);
+                $("#expanded-bg-exit").css("display","block");
+                $("#ctaClose_dc").css("left",5);
+                cancelAnimationFrame(_cb);
+                clearInterval(refreshIntervalId);
+                addResolveListener()
+                clearTimeout(gotoEndFrameTimer);
+              },20000);
+
+
+      //======
+    });
+
+    $(".elixer").on('click', function(e){
+      var audio = new Audio('elixir_collect_02.mp3');
+      audio.play();
+      collect($(this),"elixer");
+      $(this).css('visibility','hidden');
+      elixercount = elixercount+1;
+      if(elixercount<7)
+      {
+        $(".elixercur").css("width",elixercount*25);
+        levelup();
+      }
+      //========= Added 07.10.2015
+         if(gotoEndFrameTimer){
+          clearTimeout(gotoEndFrameTimer);
+          gotoEndFrameTimer= null;
+          }
+          gotoEndFrameTimer = setTimeout(function () {
+
+                $("#retry").css("opacity",1);
+                $("#learnMore").css("opacity",1);
+                $("#endframe_BG").css("z-index",4);
+                $("#endframe_BG").css("opacity",1);
+                $("#expanded-bg-exit").css("display","block");
+                $("#ctaClose_dc").css("left",5);
+                cancelAnimationFrame(_cb);
+                clearInterval(refreshIntervalId);
+                addResolveListener()
+                clearTimeout(gotoEndFrameTimer);
+              },20000);
+
+
+      //======
+
+    });
+
+    function collect(elem,type)
+    {
+      var p = elem.position();
+      var collect = $('<div/>').appendTo(".collect-con");
+      collect.css({
+          "top":p.top+5,
+          "left":p.left+13})
+        .addClass("collect"+type);
+      setTimeout(function(){
+        collect.remove();
+      },1000);
+    }
+
+    function levelup()
+    {
+      var width = $(".barbarian").css("width");
+      var height = $(".barbarian").css("height");
+      var left = $(".barbarian").css("left");
+      $(".barbarian").toggleClass("paused");
+      $(".barbarian").css('width',parseInt(width)+10);
+      $(".barbarian").css("height",parseInt(height)+10);
+      $(".barbarian").css("left",parseInt(left)-5);
+      setTimeout(function(){
+
+        $(".barbarian").css('width',parseInt(width));
+        $(".barbarian").css("height",parseInt(height));
+        $(".barbarian").css("left",parseInt(left));
+        $(".barbarian").toggleClass("paused");
+
+      },300);
+      if(totalscore==12)
+      {
+
+
+        $(".barbarian").css("-webkit-animation", "none");
+        $(".barbarian").css("-moz-animation", "none");
+        $(".barbarian").css("-ms-animation", "none");
+        $(".barbarian").css("animation", "none");
+        setTimeout(function(){
+          //var audio = new Audio('xp_level_up_01.mp3');
+          Levelupsound.play();
+
+          $(".barbarian").css("transform","scale(20,20)");
+          $(".barbarian").css("-webkit-transform","scale(20,20)");
+          $(".barbarian").css("-ms-transform","scale(20,20)");
+          //============added 07.10.2015
+           $("#retry").css("opacity",1);
+          $("#learnMore").css("opacity",1);
+          $("#endframe_BG").css("z-index",4);
+          $("#endframe_BG").css("opacity",1);
+          $("#expanded-bg-exit").css("display","block");
+          $("#ctaClose_dc").css("left",5);
+          $("#text2").css("display",'block');
+          addResolveListener()
+          cancelAnimationFrame(_cb);
+          clearInterval(refreshIntervalId);
+          //============added 07.10.2015
+        },300);
+
+        /* remove 10.10.2015 setTimeout(function(){
+           console.log('33333')
+          $("#retry").css("opacity",1);
+          $("#learnMore").css("opacity",1);
+          $("#endframe_BG").css("z-index",4);
+          $("#endframe_BG").css("opacity",1);
+          $("#expanded-bg-exit").css("display","block");
+          $("#ctaClose_dc").css("left",5);
+          addResolveListener()
+          cancelAnimationFrame(_cb);
+          clearInterval(refreshIntervalId);
+        },500);*/
+      }
+      if(totalscore%3==0&&totalscore<12)
+      {
+
+        width = parseInt(width)+20;
+        height = parseInt(height)+20;
+        left = parseInt(left)-15;
+        $(".barbarian").css("width",width);
+        $(".barbarian").css("height",height);
+        $(".barbarian").css("left",left);
+        $(".levelcon").css("transform","scale(1.2,1.2)");
+        $(".levelcon").css("-webkit-transform","scale(1.2,1.2)");
+        $(".levelcon").css("-ms-transform","scale(1.2,1.2)");
+        setTimeout(function(){
+          $(".levelcon").css("transform","scale(1,1)");
+          $(".levelcon").css("-webkit-transform","scale(1,1)");
+          $(".levelcon").css("-ms-transform","scale(1,1)");
+        },300);
+
+        $("#level").text(level++);
+      }
+      totalscore = totalscore+1;
+    }
+  </script>
+  <script src="main.js"></script>
+</html>
